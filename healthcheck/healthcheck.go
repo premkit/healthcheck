@@ -21,13 +21,13 @@ const (
 )
 
 type Healthcheck struct {
-	ID    string             `json:"id"`
-	Name  string             `json:"name"`
-	Steps []*HealthcheckStep `json:"steps"`
+	ID    string            `json:"id"`
+	Name  string            `json:"name"`
+	Steps []HealthcheckStep `json:"steps"`
 }
 
 type HealthcheckStep interface {
-	RunSynchronously() *HealthcheckStepResult
+	RunSynchronously() HealthcheckStepResult
 }
 
 type HealthcheckStepResult interface {

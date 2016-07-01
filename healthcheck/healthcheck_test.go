@@ -6,8 +6,23 @@ import (
 
 	"github.com/hashicorp/go-multierror"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
+// Some mock types to make this testable.
+type HealthcheckStepEmpty struct{}
+
+func (h HealthcheckStepEmpty) RunSynchronously() HealthcheckStepResult {
+	return HealthcheckStepResultEmpty{}
+}
+
+type HealthcheckStepResultEmpty struct{}
+
+func (h HealthcheckStepResultEmpty) Status() HealthcheckResponse {
+	return HealthcheckResponseAvailable
+}
+
+// The tests
 func TestValidateHealthcheckNoChecks(t *testing.T) {
 	healthcheck := &Healthcheck{
 		Name: "Name",
@@ -33,7 +48,7 @@ func TestValidateHealthcheckNoNameNoChecks(t *testing.T) {
 	assert.Equal(t, errors.New("At least one step is required"), multiError.Errors[1])
 }
 
-func TestCreateHealthcheck_Empty(t *testing.T) {
+func TestCreateHealthcheckEmpty(t *testing.T) {
 	healthcheck := Healthcheck{
 		Name: "Empty",
 	}
@@ -45,4 +60,18 @@ func TestCreateHealthcheck_Empty(t *testing.T) {
 	multiError := err.(*multierror.Error)
 	assert.Equal(t, 1, len(multiError.Errors))
 	assert.Equal(t, errors.New("At least one step is required"), multiError.Errors[0])
+}
+
+func TestCreateHealthcheck(t *testing.T) {
+	healthcheck := Healthcheck{
+		Name:  "Empty",
+		Steps: make([]HealthcheckStep, 0, 0),
+	}
+	healthcheck.Steps = append(healthcheck.Steps, HealthcheckStepEmpty{})
+
+	o, err := CreateHealthcheck(&healthcheck)
+	require.NoError(t, err)
+	assert.Equal(t, 1, len(o.Steps), "there should be 1 step")
+	assert.Equal(t, "Empty", o.Name, "name should be 'Empty'")
+	assert.Equal(t, 64, len(o.ID), "id should be 64 chars long")
 }

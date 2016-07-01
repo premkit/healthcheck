@@ -11,12 +11,12 @@ import (
 	"github.com/parnurzeal/gorequest"
 )
 
-func (r *HTTPHealthcheckResult) Status() healthcheck.HealthcheckResponse {
+func (r HTTPHealthcheckResult) Status() healthcheck.HealthcheckResponse {
 	return r.status
 }
 
 // RunSynchronously will run the test and return the results immediately.
-func (h *HTTPHealthcheck) RunSynchronously() (*HTTPHealthcheckResult, error) {
+func (h HTTPHealthcheck) RunSynchronously() (HTTPHealthcheckResult, error) {
 	if h.Method == "GET" {
 		return h.getSynchronously()
 	} else if h.Method == "POST" {
@@ -25,11 +25,17 @@ func (h *HTTPHealthcheck) RunSynchronously() (*HTTPHealthcheckResult, error) {
 		return h.putSynchronously()
 	}
 
-	return nil, fmt.Errorf("Unsupported method %q", h.Method)
+	// Use an unknown response here.
+	response := HTTPHealthcheckResult{
+		status:      healthcheck.HealthcheckResponseUnknown,
+		TimeStarted: time.Now(),
+	}
+
+	return response, fmt.Errorf("Unsupported method %q", h.Method)
 }
 
-func (h *HTTPHealthcheck) getSynchronously() (*HTTPHealthcheckResult, error) {
-	response := &HTTPHealthcheckResult{
+func (h HTTPHealthcheck) getSynchronously() (HTTPHealthcheckResult, error) {
+	response := HTTPHealthcheckResult{
 		status:      healthcheck.HealthcheckResponseUnknown,
 		TimeStarted: time.Now(),
 	}
@@ -63,10 +69,20 @@ func (h *HTTPHealthcheck) getSynchronously() (*HTTPHealthcheckResult, error) {
 	return response, nil
 }
 
-func (h *HTTPHealthcheck) postSynchronously() (*HTTPHealthcheckResult, error) {
-	return nil, errors.New("Not implemented")
+func (h HTTPHealthcheck) postSynchronously() (HTTPHealthcheckResult, error) {
+	response := HTTPHealthcheckResult{
+		status:      healthcheck.HealthcheckResponseUnknown,
+		TimeStarted: time.Now(),
+	}
+
+	return response, errors.New("Not implemented")
 }
 
-func (h *HTTPHealthcheck) putSynchronously() (*HTTPHealthcheckResult, error) {
-	return nil, errors.New("Not implemented")
+func (h HTTPHealthcheck) putSynchronously() (HTTPHealthcheckResult, error) {
+	response := HTTPHealthcheckResult{
+		status:      healthcheck.HealthcheckResponseUnknown,
+		TimeStarted: time.Now(),
+	}
+
+	return response, errors.New("Not implemented")
 }
