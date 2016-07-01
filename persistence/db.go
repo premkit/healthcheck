@@ -1,6 +1,9 @@
 package persistence
 
 import (
+	"os"
+	"path"
+
 	"github.com/premkit/healthcheck/log"
 
 	"github.com/boltdb/bolt"
@@ -16,7 +19,19 @@ func GetDB() (*bolt.DB, error) {
 		return DB, nil
 	}
 
-	conn, err := bolt.Open("/data/healthcheck.db", 0600, nil)
+	// Use the environment variable for the datadir, if set
+	dataDirectory := os.Getenv("DATA_DIRECTORY")
+	if dataDirectory == "" {
+		dataDirectory = "/data"
+	}
+
+	if err := os.MkdirAll(dataDirectory, 0600); err != nil {
+		log.Error(err)
+		return nil, err
+	}
+
+	path := path.Join(dataDirectory, "healthcheck.db")
+	conn, err := bolt.Open(path, 0600, nil)
 	if err != nil {
 		log.Error(err)
 		return nil, err
