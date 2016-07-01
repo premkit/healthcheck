@@ -1,6 +1,5 @@
 
 github.com/premkit/healthcheck/daemon
-github.com/premkit/healthcheck/models
 github.com/premkit/healthcheck/persistence
 github.com/premkit/healthcheck/schema
 github.com/premkit/healthcheck/healthcheck
