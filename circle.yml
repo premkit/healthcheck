@@ -27,7 +27,7 @@ test:
   override:
     - cd $HOME/src/github.com/premkit/healthcheck/test && ./coverage.bash ./packages.txt ./profile.cov
   post:
-    - /tmp/bin/goveralls -service=circle-ci -repotoken=$COVERALLS_REPO_TOKEN -coverprofile=$HOME/src/github.com/premkit/premkit/test/profile.cov
+    - /tmp/bin/goveralls -service=circle-ci -repotoken=$COVERALLS_REPO_TOKEN -coverprofile=$HOME/src/github.com/premkit/healthcheck/test/profile.cov
 
 deployment:
   docker:
