@@ -25,7 +25,7 @@ func GetDB() (*bolt.DB, error) {
 		dataDirectory = "/data"
 	}
 
-	if err := os.MkdirAll(dataDirectory, 0600); err != nil {
+	if err := os.MkdirAll(dataDirectory, 0700); err != nil {
 		log.Error(err)
 		return nil, err
 	}
