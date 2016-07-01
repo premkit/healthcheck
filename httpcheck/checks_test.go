@@ -80,7 +80,7 @@ func TestHTTPHealthcheckDegraded(t *testing.T) {
 	assert.Equal(t, healthcheck.HealthcheckResponseDegraded, resp.Status())
 }
 
-// Run a http healthcheck that returns an unavailable response
+// Run an http healthcheck that returns an unavailable response
 func TestHTTPHealthcheckUnavailable(t *testing.T) {
 	check := HTTPHealthcheck{
 		Endpoint: "https://github.com/premkit/invalid",
@@ -101,4 +101,47 @@ func TestHTTPHealthcheckUnavailable(t *testing.T) {
 	require.NoError(t, err)
 
 	assert.Equal(t, healthcheck.HealthcheckResponseUnavailable, resp.Status())
+}
+
+// Run an http healthcheck with an unknown method
+func TestHTTPHealthcheckUnsupported(t *testing.T) {
+	check := HTTPHealthcheck{
+		Endpoint: "https://github.com/premkit/invalid",
+		Method:   "OPTIONS",
+		ResponseAvailable: []int{
+			http.StatusOK,
+		},
+	}
+
+	resp, err := check.RunSynchronously()
+	assert.Equal(t, "Unsupported method \"OPTIONS\"", err.Error())
+	assert.Equal(t, healthcheck.HealthcheckResponseUnknown, resp.Status())
+}
+
+// Run an http healthcheck with a POST method
+func TestHTTPHealthcheckPost(t *testing.T) {
+	check := HTTPHealthcheck{
+		Endpoint: "https://github.com/premkit/invalid",
+		Method:   "POST",
+		ResponseUnavailable: []int{
+			http.StatusNotFound,
+		},
+	}
+
+	_, err := check.RunSynchronously()
+	assert.Equal(t, "Not implemented", err.Error())
+}
+
+// Run an http healthcheck with a PUT method
+func TestHTTPHealthcheckPut(t *testing.T) {
+	check := HTTPHealthcheck{
+		Endpoint: "https://github.com/premkit/invalid",
+		Method:   "PUT",
+		ResponseUnavailable: []int{
+			http.StatusNotFound,
+		},
+	}
+
+	_, err := check.RunSynchronously()
+	assert.Equal(t, "Not implemented", err.Error())
 }
