@@ -1,4 +1,4 @@
-healthcheck
+Healthcheck [![CircleCI](https://circleci.com/gh/premkit/healthcheck.svg?style=svg)](https://circleci.com/gh/premkit/healthcheck) [![Coverage Status](https://coveralls.io/repos/github/premkit/healthcheck/badge.svg?branch=master)](https://coveralls.io/github/premkit/healthcheck?branch=master)
 ===========
 
 ## Setup
