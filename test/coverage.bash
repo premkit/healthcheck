@@ -1,29 +1,28 @@
-
 #!/bin/bash
-
-# This script tests multiple packages and creates a consolidated cover profile
-# See https://gist.github.com/hailiang/0f22736320abe6be71ce for inspiration.
-# The list of packages to test is specified in testpackages.txt.
 
 function die() {
   echo $*
   exit 1
 }
 
+# Read all local packages and save to a tmp file
+tmpfile=$(mktemp)
+govendor list +local | awk '{print $2}' > $tmpfile
+
 # Initialize profile.cov
-echo "mode: count" > $2
+echo "mode: count" > ./profile.cov
 
 # Initialize error tracking
 ERROR=""
 
 # Test each package and append coverage profile info to profile.cov
-for pkg in `cat $1`
+for pkg in `cat $tmpfile`
 do
     echo $pkg
     govendor test -v -covermode=count -coverprofile=profile_tmp.cov $pkg || ERROR="Error testing $pkg"
     if [ -f profile_tmp.cov ];
     then
-      tail -n +2 profile_tmp.cov >> $2 || die "Unable to append coverage for $pkg"
+      tail -n +2 profile_tmp.cov >> ./profile.cov || die "Unable to append coverage for $pkg"
       rm profile_tmp.cov
     fi
 done
@@ -33,4 +32,4 @@ then
     die "Encountered error, last error was: $ERROR"
 fi
 
-echo "Generated coverage profile $2"
+echo "Generated coverage profile ./profile.cov"

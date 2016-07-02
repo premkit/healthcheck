@@ -4,10 +4,13 @@ clean:
 	rm -f ./bin/healthcheck
 
 run:
-	./bin/healthcheck daemon
+	./bin/healthcheck server
 
 test:
 	govendor test +local
+
+deps:
+	govendor install +local
 
 build:
 	mkdir -p ./bin
@@ -16,6 +19,7 @@ build:
 shell:
 	docker run --rm -it -P --name healthcheck \
                 -p 8201:80 \
+                -e LOG_LEVEL=debug \
                 -e PREMKIT_ROUTER=$(PREMKIT_ROUTER) \
                 -e ADVERTISE_ADDRESS="http://$(shell ip -4 addr show docker0 | grep -Po 'inet \K[\d.]+'):8201" \
 		-v `pwd`:/go/src/github.com/premkit/healthcheck \
