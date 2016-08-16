@@ -22,10 +22,9 @@ test:
     - GOPATH=/tmp go get github.com/axw/gocov/gocov
     - GOPATH=/tmp go get github.com/mattn/goveralls
     - go get github.com/stretchr/testify/assert
-    - go get gopkg.in/DATA-DOG/go-sqlmock.v1
     - if ! GOPATH=/tmp go get github.com/golang/tools/cmd/cover; then GOPATH=/tmp go get golang.org/x/tools/cmd/cover; fi
   override:
-    - cd $HOME/src/github.com/premkit/healthcheck/test && ./coverage.bash ./packages.txt ./profile.cov
+    - cd $HOME/src/github.com/premkit/healthcheck/test && ./coverage.bash
   post:
     - /tmp/bin/goveralls -service=circle-ci -repotoken=$COVERALLS_REPO_TOKEN -coverprofile=$HOME/src/github.com/premkit/healthcheck/test/profile.cov
 
@@ -36,9 +35,9 @@ deployment:
     commands:
       - rm $HOME/src/github.com/premkit/healthcheck/Dockerfile
       - mv $HOME/src/github.com/premkit/healthcheck/deploy/Dockerfile $HOME/src/github.com/premkit/healthcheck/Dockerfile
-      - sudo docker build -t premkit/healthcheck:0.1.0 $HOME/src/github.com/premkit/healthcheck
+      - sudo docker build -t premkit/healthcheck:0.0.1 $HOME/src/github.com/premkit/healthcheck
       - sudo docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
-      - sudo docker push premkit/healthcheck:0.1.0
-      - sudo docker tag premkit/healthcheck:0.1.0 premkit/healthcheck:latest
+      - sudo docker push premkit/healthcheck:0.0.1
+      - sudo docker tag premkit/healthcheck:0.0.1 premkit/healthcheck:latest
       - sudo docker push premkit/healthcheck:latest
 

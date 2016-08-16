@@ -2,10 +2,10 @@ package main
 
 import (
 	"math/rand"
+	"runtime"
 	"time"
 
-	"github.com/premkit/healthcheck/daemon"
-	"github.com/premkit/healthcheck/router"
+	"github.com/premkit/healthcheck/commands"
 )
 
 func init() {
@@ -13,13 +13,6 @@ func init() {
 }
 
 func main() {
-	// Import healthchecks from the bootstrap config.
-
-	// Start the HTTP server.
-	daemon.Run()
-
-	// Register with the reverse proxy, if the reverse proxy is available
-	router.Register()
-
-	<-make(chan int)
+	runtime.GOMAXPROCS(runtime.NumCPU())
+	commands.Execute()
 }

@@ -1,9 +1,0 @@
-
-github.com/premkit/healthcheck/daemon
-github.com/premkit/healthcheck/persistence
-github.com/premkit/healthcheck/schema
-github.com/premkit/healthcheck/healthcheck
-github.com/premkit/healthcheck/httpcheck
-github.com/premkit/healthcheck/portcheck
-github.com/premkit/healthcheck/execcheck
-github.com/premkit/healthcheck

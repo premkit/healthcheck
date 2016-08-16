@@ -26,7 +26,11 @@ func Register() error {
 		"name": "healthcheck",
 		"path": "healthcheck",
 		"upstreams": [
-			%q
+			{
+				"url": %q,
+				"include_service_path": false,
+				"insecure_skip_verify": false
+			}
 		]
 	}
 }`, os.Getenv("ADVERTISE_ADDRESS"))

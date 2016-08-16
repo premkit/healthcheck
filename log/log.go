@@ -1,13 +1,12 @@
 package log
 
-import logging "github.com/op/go-logging"
-
-var (
-	log = logging.MustGetLogger("healthcheck")
+import (
+	log "github.com/Sirupsen/logrus"
 )
 
 func init() {
-	log.ExtraCalldepth++
+	// TODO make this configurable
+	log.SetLevel(log.DebugLevel)
 }
 
 // Debugf logs a message in sprintf format at debug level.

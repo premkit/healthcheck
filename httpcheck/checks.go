@@ -1,22 +1,20 @@
 package httpcheck
 
 import (
-	"errors"
-	"fmt"
 	"net/http"
 	"time"
 
-	"github.com/premkit/healthcheck/healthcheck"
+	"github.com/premkit/healthcheck/result"
 
 	"github.com/parnurzeal/gorequest"
 )
 
-func (r HTTPHealthcheckResult) Status() healthcheck.HealthcheckResponse {
+func (r HTTPHealthcheckResult) Status() result.HealthcheckResponse {
 	return r.status
 }
 
 // RunSynchronously will run the test and return the results immediately.
-func (h HTTPHealthcheck) RunSynchronously() (HTTPHealthcheckResult, error) {
+func (h HTTPHealthcheck) RunSynchronously() result.HealthcheckStepResult {
 	if h.Method == "GET" {
 		return h.getSynchronously()
 	} else if h.Method == "POST" {
@@ -27,62 +25,62 @@ func (h HTTPHealthcheck) RunSynchronously() (HTTPHealthcheckResult, error) {
 
 	// Use an unknown response here.
 	response := HTTPHealthcheckResult{
-		status:      healthcheck.HealthcheckResponseUnknown,
+		status:      result.HealthcheckResponseUnknown,
 		TimeStarted: time.Now(),
 	}
 
-	return response, fmt.Errorf("Unsupported method %q", h.Method)
+	return result.HealthcheckStepResult(response)
 }
 
-func (h HTTPHealthcheck) getSynchronously() (HTTPHealthcheckResult, error) {
+func (h HTTPHealthcheck) getSynchronously() HTTPHealthcheckResult {
 	response := HTTPHealthcheckResult{
-		status:      healthcheck.HealthcheckResponseUnknown,
+		status:      result.HealthcheckResponseUnknown,
 		TimeStarted: time.Now(),
 	}
 
 	// Make the request
-	resp, _, _ := gorequest.New().Get(h.Endpoint).End()
+	resp, _, _ := gorequest.New().Get(h.URI).End()
 
 	response.Duration = time.Now().Sub(response.TimeStarted)
 	if resp == nil {
-		response.status = healthcheck.HealthcheckResponseUnavailable
+		response.status = result.HealthcheckResponseUnavailable
 	} else {
-		response.status = healthcheck.HealthcheckResponseUnavailable
-		for _, r := range h.ResponseAvailable {
+		response.status = result.HealthcheckResponseUnavailable
+		for _, r := range h.StatusCodesAvailable {
 			if resp.StatusCode == r {
-				response.status = healthcheck.HealthcheckResponseAvailable
+				response.status = result.HealthcheckResponseAvailable
 			}
 		}
-		for _, r := range h.ResponseDegraded {
+		for _, r := range h.StatusCodesDegraded {
 			if resp.StatusCode == r {
-				response.status = healthcheck.HealthcheckResponseDegraded
+				response.status = result.HealthcheckResponseDegraded
 			}
 		}
-		for _, r := range h.ResponseUnavailable {
+		for _, r := range h.StatusCodesUnavailable {
 			if resp.StatusCode == r {
-				response.status = healthcheck.HealthcheckResponseUnavailable
+				response.status = result.HealthcheckResponseUnavailable
 			}
 		}
-		response.ResponseCode = http.StatusInternalServerError
+		response.StatusCode = http.StatusInternalServerError
 	}
 
-	return response, nil
+	return response
 }
 
-func (h HTTPHealthcheck) postSynchronously() (HTTPHealthcheckResult, error) {
+func (h HTTPHealthcheck) postSynchronously() HTTPHealthcheckResult {
 	response := HTTPHealthcheckResult{
-		status:      healthcheck.HealthcheckResponseUnknown,
+		status:      result.HealthcheckResponseUnknown,
 		TimeStarted: time.Now(),
 	}
 
-	return response, errors.New("Not implemented")
+	return response
 }
 
-func (h HTTPHealthcheck) putSynchronously() (HTTPHealthcheckResult, error) {
+func (h HTTPHealthcheck) putSynchronously() HTTPHealthcheckResult {
 	response := HTTPHealthcheckResult{
-		status:      healthcheck.HealthcheckResponseUnknown,
+		status:      result.HealthcheckResponseUnknown,
 		TimeStarted: time.Now(),
 	}
 
-	return response, errors.New("Not implemented")
+	return response
 }
